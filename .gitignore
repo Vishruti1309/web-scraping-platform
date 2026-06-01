@@ -1,7 +1,19 @@
-venv/
+# Python
 __pycache__/
 *.pyc
+.venv/
+
+# Node
+node_modules/
+
+# Env
 .env
-data/
-logs/
+
+# Database
+*.db
+
+# Exports
 exports/
+
+# Logs
+*.log

@@ -354,7 +354,14 @@ class ScraperEngine:
                         elif field in ['image', 'img', 'src']:
                             item[field] = element.get("src", "")
                         else:
-                            item[field] = element.get_text(strip=True)
+                            if field == "title":
+                                item[field] = element.get("title") or element.get_text(strip=True)
+                            elif field in ['link', 'href', 'url']:
+                                item[field] = element.get("href", "")
+                            elif field in ['image', 'img', 'src']:
+                                item[field] = element.get("src", "")
+                            else:
+                                item[field] = element.get_text(strip=True)
 
                     except:
                         item[field] = None

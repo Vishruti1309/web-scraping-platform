@@ -38,7 +38,8 @@ class StorageManager:
     def _init_sqlite(self):
         """Initialize SQLite database"""
         try:
-            self.connection = sqlite3.connect(config.SQLITE_DB)
+            # self.connection = sqlite3.connect(config.SQLITE_DB)
+            self.connection = sqlite3.connect(config.SQLITE_DB, check_same_thread=False)
             self.connection.row_factory = sqlite3.Row
             logger.info(f"Connected to SQLite: {config.SQLITE_DB}")
             
@@ -94,6 +95,15 @@ class StorageManager:
         if self.db_type == 'sqlite':
             cursor = self.connection.cursor()
             
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS saved_jobs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT,
+                price TEXT,
+                availability TEXT,
+                saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            ''')
             # Main data table
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS scraped_data (
@@ -313,14 +323,31 @@ class StorageManager:
                 self.connection.close()
             logger.info("Database connection closed")
 
+    def save_saved_job(self, job):
+        cursor = self.connection.cursor()
 
+        cursor.execute('''
+            INSERT INTO saved_jobs (title, price, availability)
+            VALUES (?, ?, ?)
+        ''', (
+            job.get("title"),
+            job.get("price"),
+            job.get("availability")
+        ))
+
+        self.connection.commit()
 class FileExporter:
     """Exports data to various file formats"""
+    
+
     
     def __init__(self):
         self.export_dir = Path(config.EXPORT_DIR)
         self.export_dir.mkdir(exist_ok=True)
     
+       
+        
+       
     def _get_filename(self, base_name: str, extension: str) -> str:
         """Generate filename with optional timestamp"""
         if config.EXPORT_TIMESTAMP:

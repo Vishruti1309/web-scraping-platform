@@ -77,7 +77,7 @@ SCRAPING_TARGETS = {
     
     'books': {
         'name': 'Books to Scrape',
-        'url': 'http://books.toscrape.com',
+        'url': 'http://books.toscrape.com/catalogue/page-1.html',
         'type': 'static',
         'enabled': True,
         'schedule': 'daily',
@@ -90,7 +90,7 @@ SCRAPING_TARGETS = {
         },
         'fields': ['title', 'price', 'availability', 'rating', 'scraped_at'],
         'pagination': True,
-        'pagination_selector': '.next a',
+        'pagination_selector': 'li.next a',
         # NEW
         'field_mapping': {
             'title': 'title',
@@ -295,4 +295,4 @@ CRAWL_DELAY = 2  # seconds (overridden by robots.txt if stricter)
 # PERFORMANCE SETTINGS
 MAX_WORKERS = 5  # for parallel scraping
 BATCH_SIZE = 100  # records to process at once
-MAX_PAGES_PER_SITE = 3  # limit for pagination
+MAX_PAGES_PER_SITE = 5  # limit for pagination

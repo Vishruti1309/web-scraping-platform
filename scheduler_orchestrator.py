@@ -78,6 +78,10 @@ class ScrapingOrchestrator:
             logger.logger.info(f"Processing {len(raw_data)} items from {source_name}")
             processed_data = self.processor.process_batch(raw_data)
             
+            #line added here 
+            logger.logger.info(f"Processed data count: {len(processed_data)}")
+
+            
             logger.log_data_processed(
                 len(processed_data),
                 self.processor.duplicates_removed
