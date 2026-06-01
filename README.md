@@ -1,329 +1,214 @@
-Below is a clean, professional, **PPT-ready + submission-ready README.md** for your project.
-You can copy–paste directly into your project folder.
+🚀 Job Tracker & Web Scraping Dashboard
 
-No Git commands.
-No cloning.
-Just a fully written README.
+A full-stack **AI-inspired web scraping and job tracking platform** that extracts data from websites, processes it, stores it in a database, and provides an interactive dashboard with filtering, sorting, and save features.
 
----
+This project combines **Web Scraping + ETL Pipeline + Full-Stack Dashboard**, making it a real-world data engineering + frontend system.
 
-# 🚀 **Automated Web Scraping, Cleaning & Data Aggregation System**
 
-A complete Python-based system to scrape **static websites, dynamic JS websites, and REST APIs**, clean & standardize the data, store it in a database, export to multiple formats, and run scheduled scraping jobs automatically.
 
-This project is designed as a **mini ETL pipeline + scraping framework**, ideal for real-world data extraction tasks.
+🌟 Key Features
 
----
+ 🔍 Smart Web Scraping Engine
 
-# 📌 **Features**
+* Multi-page scraping (pagination support)
+* Supports static websites (BooksToScrape)
+* Easily extendable to job platforms (RemoteOK, Internshala)
+* Retry logic and structured extraction
 
-### ✅ **Multi-Source Scraping**
 
-- Supports **Static HTML sites** (Books, Quotes)
-- Supports **Dynamic Selenium sites** (Myntra)
-- Supports **REST APIs** (JSONPlaceholder)
-- Easy to add more sources via `config.py`
 
-### ✅ **Professional-Grade Scraping Engine**
+ ⚙️ Data Processing Pipeline (ETL)
 
-- User-agent rotation
-- Retry logic
-- Automatic pagination
-- Dynamic browser automation
-- Anti-bot bypass using **undetected-chromedriver**
+* Data cleaning (whitespace, formatting)
+* Field standardization (`field_mapping`)
+* Duplicate removal
+* Validation & filtering
+* Ready for analytics
 
-### ✅ **Data Processing Pipeline**
 
-- Cleaning (HTML tag removal, whitespace)
-- Standardization using `field_mapping`
-- Duplicate removal
-- Basic validation
-- Bad-entry filtering
 
-### ✅ **Storage Layer**
+ 🗄️ Database Layer (SQLite)
 
-- Saves clean data into SQLite database
-- Logs scraping history
-- Logs structure changes
+* Stores all scraped data
+* Maintains scraping history
+* Supports saved/bookmarked jobs 
 
-### ✅ **Export System**
 
-Automatically exports results to:
 
-- **CSV**
-- **JSON**
-- **Excel**
+ 📤 Export System
 
-### ✅ **Monitoring**
+Automatically exports data into:
 
-- Logging of each job
-- Structure change detection
-- Performance metrics
-- Error logging
+* CSV
+* JSON
+* Excel
 
-### ✅ **Scheduler**
+Stored inside `/exports/` folder.
 
-Run scrapers:
 
-- Hourly
-- Daily
-- Weekly
-  or on-demand.
 
----
+ 📊 React Dashboard (Frontend)
 
-# 📂 **Project Structure**
+Interactive UI with:
+
+* 🔍 Search functionality
+* 💰 Price (salary) filter
+* 🔄 Sort toggle (Newest / Oldest)
+* 📊 Results count
+* ❤️ Save job feature
+* 🧹 Clear data functionality
+
+
+
+ ❤️ Save / Bookmark Feature
+
+* Save selected items to database
+* Separate storage (`saved_jobs` table)
+* Mimics real job platforms (LinkedIn / Indeed)
+
+
+
+ 🧠 Monitoring & Logging
+
+* Scraping logs
+* Error tracking
+* Performance monitoring
+* Job history tracking
+
+
+
+🏗️ Tech Stack
+
+🔹 Backend
+
+* FastAPI
+* Python
+* SQLite
+* Pandas
+
+🔹 Frontend
+
+* React (Vite)
+* Axios
+* Inline CSS (custom UI)
+
+🔹 Scraping
+
+* Requests / BeautifulSoup
+* Playwright / Selenium (extendable)
+
+
+
+📂 Project Structure
 
 ```
 scraping_system/
 │── scraper_engine.py
 │── data_processor.py
 │── storage_manager.py
-│── monitoring_alerts.py
 │── scheduler_orchestrator.py
+│── api_server.py
 │── config.py
-│── examples.py
 │
-├── data/          → SQLite database
-├── logs/          → Log files
-├── exports/       → CSV, JSON, Excel outputs
-└── venv/          → Virtual environment (if created)
+├── frontend/          → React app
+├── data/              → SQLite DB
+├── exports/           → CSV/JSON/Excel
+├── logs/              → Logs
 ```
 
----
 
-# 📦 **Installation Guide**
 
-### **1. Install Python**
+⚙️ Installation & Setup
 
-Make sure Python 3.10+ is installed.
-
-Check using:
+ 1️⃣ Clone Repository
 
 ```bash
-python --version
+git clone https://github.com/Vishruti1309/web-scraping-platform
+cd project-name
 ```
 
----
 
-### **2. Install Dependencies**
 
-Inside your project folder:
+ 2️⃣ Backend Setup
 
 ```bash
 pip install -r requirements.txt
+uvicorn api_server:app --reload
 ```
 
-This installs:
+Backend runs on:
 
-- requests
-- bs4
-- selenium
-- undetected-chromedriver
-- pandas
-- schedule
-- openpyxl
-- etc.
+```
+http://127.0.0.1:8000
+```
 
----
 
-### **3. (Optional) Create Virtual Environment**
+
+ 3️⃣ Frontend Setup
 
 ```bash
-python -m venv venv
+cd frontend
+npm install
+npm run dev
 ```
 
-Activate:
-
-**Windows**
-
-```bash
-venv\Scripts\activate
-```
-
----
-
-# ▶️ **How to Run the Project**
-
----
-
-## ✅ **1. Run a Single Source**
-
-Use this to scrape **one site**.
-
-### **Static Example**
-
-```bash
-python scheduler_orchestrator.py --mode run-source --source books
-```
-
-### **Dynamic Example (Myntra)**
-
-```bash
-python scheduler_orchestrator.py --mode run-source --source myntra_tops
-```
-
-### **API Example**
-
-```bash
-python scheduler_orchestrator.py --mode run-source --source json_placeholder_posts
-```
-
-**What you will see:**
-
-- Selenium browser opening (for dynamic)
-- Items loading
-- Scraped data processed
-- Export files created (CSV/JSON/Excel)
-- Data stored in SQLite
-
----
-
-## ✅ **2. Run All Sources at Once**
-
-```bash
-python scheduler_orchestrator.py --mode run-once
-```
-
-Runs every enabled source in `config.py`.
-
----
-
-## ✅ **3. Run Scheduler (Automatic Daily/Weekly Jobs)**
-
-```bash
-python scheduler_orchestrator.py --mode schedule
-```
-
-Runs in background like a service.
-
----
-
-# 🛠 **Add a New Source**
-
-Go to **config.py** and add an entry inside `SCRAPING_TARGETS`.
-
-### **For Static HTML**
-
-```python
-'my_site': {
-    'name': 'My Site',
-    'url': 'https://example.com',
-    'type': 'static',
-    'selectors': {
-        'container': '.card',
-        'title': 'h2',
-        'price': '.price'
-    },
-    'fields': ['title', 'price', 'scraped_at'],
-    'pagination': True,
-    'pagination_selector': '.next a'
-}
-```
-
-### **For Dynamic Website**
-
-```python
-'type': 'dynamic'
-```
-
-### **For API**
-
-```python
-'type': 'api'
-```
-
----
-
-# 🧹 **Data Cleaning (What Happens Internally)**
-
-Your pipeline:
-
-1. Removes HTML tags
-2. Trims whitespace
-3. Converts dates
-4. Removes duplicates
-5. Standardizes fields using `field_mapping`
-6. Validates data (checks missing values)
-
-After this, it becomes **clean, analytics-ready data**.
-
----
-
-# 🗃 **Where Is Data Stored?**
-
-### **SQLite Database**
-
-Location:
+Frontend runs on:
 
 ```
-/data/scraped_data.db
+http://localhost:5173
 ```
 
-Contains:
 
-- `scraped_data` – All cleaned records
-- `scraping_history` – Logs of each run
-- `structure_logs` – Selector monitoring
 
-Use DB Browser for SQLite to view it.
-
----
-
-# 📤 **Exports**
-
-After every run, files appear in:
+▶️ How It Works
 
 ```
-/exports/
+User clicks "Start Scraping"
+        ↓
+Scraper Engine fetches data
+        ↓
+Data Processor cleans & standardizes
+        ↓
+StorageManager saves to DB
+        ↓
+Exporter creates CSV/JSON/Excel
+        ↓
+React Dashboard displays data
+        ↓
+User can filter / sort / save 
 ```
 
-Examples:
 
-- `books_data_20251201.csv`
-- `myntra_tops_data_20251201.json`
-- `json_placeholder_posts.xlsx`
 
----
+📸 Features Demo (Add screenshots here)
 
-# 📊 **Monitoring & Logs**
+* Dashboard UI - [Dashboard](screenshots/dashboard.png)
+* Filters & sorting - [Filters](screenshots/filters.png)
+* Exported files - [Exported_files](exports/)
 
-Logs saved automatically to:
 
-```
-/logs/
-```
 
-Includes:
+🚀 Future Improvements
 
-- Errors
-- Start/end time
-- Items scraped
-- Structure mismatch alerts
-- Performance data
+* 🌍 Real job scraping (RemoteOK, Internshala)
+* 🔐 User authentication
+* ☁️ Deployment (Vercel + Render)
+* 📱 Responsive UI
+* 🔔 Notifications / alerts
 
----
 
-# 🧪 **Testing (Using examples.py)**
 
-You can test individual components:
+🧠 What This Project Demonstrates
 
-```
-python examples.py
-```
+* Full-stack development (React + FastAPI)
+* Web scraping architecture
+* ETL pipeline design
+* Database handling
+* API integration
+* UI/UX thinking
 
----
 
-#Conclusion
 
-This system is a complete, scalable, automated solution for:
+📌 Conclusion
 
-- Web scraping
-- Dynamic content handling
-- Data cleaning
-- ETL pipelines
-- Database storage
-- Automated scheduling
-- Exporting & monitoring
-
-It behaves like a real-world professional data ingestion pipeline, not just a simple scraping script.
+This project is not just a scraper — it is a **complete data pipeline + dashboard system** that mimics real-world job platforms and data engineering workflows.
