@@ -6,16 +6,16 @@ Handles both static and dynamic website scraping with error handling
 
 import requests
 from bs4 import BeautifulSoup
-import undetected_chromedriver as uc
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
+# import undetected_chromedriver as uc
+# from selenium.webdriver.common.by import By
+# from selenium.webdriver.support.ui import WebDriverWait
+# from selenium.webdriver.support import expected_conditions as EC
+# from selenium.webdriver.common.action_chains import ActionChins
 from urllib.parse import urljoin, urlparse
 from urllib.robotparser import RobotFileParser
 import time
 import random
-import logging
+import logging 
 from typing import List, Dict, Optional
 from datetime import datetime
 
@@ -208,118 +208,118 @@ class ScraperEngine:
                     return []
 
 
-    def _setup_selenium(self):
-        if self.driver:
-            return
+    # def _setup_selenium(self):
+    #     if self.driver:
+    #         return
 
-        try:
-            logger.info("Initializing undetected Chrome driver…")
+    #     try:
+    #         logger.info("Initializing undetected Chrome driver…")
 
-            chrome_options = uc.ChromeOptions()
-            chrome_options.add_argument("--no-sandbox")
-            chrome_options.add_argument("--disable-dev-shm-usage")
-            chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-            chrome_options.add_argument("--window-size=1920,1080")
+    #         chrome_options = uc.ChromeOptions()
+    #         chrome_options.add_argument("--no-sandbox")
+    #         chrome_options.add_argument("--disable-dev-shm-usage")
+    #         chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    #         chrome_options.add_argument("--window-size=1920,1080")
 
-            # REMOVE THESE → NOT SUPPORTED ANYMORE
-            # chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-            # chrome_options.add_experimental_option('useAutomationExtension', False)
+    #         # REMOVE THESE → NOT SUPPORTED ANYMORE
+    #         # chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    #         # chrome_options.add_experimental_option('useAutomationExtension', False)
 
-            # Use random user agent
-            chrome_options.add_argument(f'user-agent={random.choice(config.USER_AGENTS)}')
+    #         # Use random user agent
+    #         chrome_options.add_argument(f'user-agent={random.choice(config.USER_AGENTS)}')
 
-            # Headless mode toggle
-            if config.USE_HEADLESS:
-                chrome_options.add_argument("--headless=new")
+    #         # Headless mode toggle
+    #         if config.USE_HEADLESS:
+    #             chrome_options.add_argument("--headless=new")
 
-            # Launch UC with simplified flags
-            self.driver = uc.Chrome(options=chrome_options)
+    #         # Launch UC with simplified flags
+    #         self.driver = uc.Chrome(options=chrome_options)
 
-            # Stealth: remove webdriver property
-            self.driver.execute_script("""
-                Object.defineProperty(navigator, 'webdriver', { get: () => undefined })
-            """)
+    #         # Stealth: remove webdriver property
+    #         self.driver.execute_script("""
+    #             Object.defineProperty(navigator, 'webdriver', { get: () => undefined })
+    #         """)
 
-            self.driver.set_page_load_timeout(90)
-            self.driver.implicitly_wait(config.IMPLICIT_WAIT)
+    #         self.driver.set_page_load_timeout(90)
+    #         self.driver.implicitly_wait(config.IMPLICIT_WAIT)
 
-            logger.info("Undetected Chrome initialized successfully")
+    #         logger.info("Undetected Chrome initialized successfully")
 
-        except Exception as e:
-            logger.error(f"Selenium setup failed: {e}")
-            raise
+    #     except Exception as e:
+    #         logger.error(f"Selenium setup failed: {e}")
+    #         raise
 
 
 
     # UPDATED SCROLLING
-    def _scroll_page(self):
-        """Deep scrolling for React/JS lazy-loaded sites"""
-        try:
-            last_height = self.driver.execute_script("return document.body.scrollHeight")
+    # def _scroll_page(self):
+    #     """Deep scrolling for React/JS lazy-loaded sites"""
+    #     try:
+    #         last_height = self.driver.execute_script("return document.body.scrollHeight")
 
-            for i in range(10):
-                logger.info(f"Dynamic scroll: {i+1}/10")
-                self.driver.execute_script(
-                    "window.scrollTo(0, document.body.scrollHeight);"
-                )
-                time.sleep(random.uniform(2, 4))
+    #         for i in range(10):
+    #             logger.info(f"Dynamic scroll: {i+1}/10")
+    #             self.driver.execute_script(
+    #                 "window.scrollTo(0, document.body.scrollHeight);"
+    #             )
+    #             time.sleep(random.uniform(2, 4))
 
-                new_height = self.driver.execute_script(
-                    "return document.body.scrollHeight"
-                )
-                if new_height == last_height:
-                    break
-                last_height = new_height
+    #             new_height = self.driver.execute_script(
+    #                 "return document.body.scrollHeight"
+    #             )
+    #             if new_height == last_height:
+    #                 break
+    #             last_height = new_height
 
-        except Exception as e:
-            logger.warning(f"Scroll failed: {e}")
+    #     except Exception as e:
+    #         logger.warning(f"Scroll failed: {e}")
 
 
     #UPDATED DYNAMIC FETCHER    
-    def _fetch_dynamic(self, url: str) -> Optional[BeautifulSoup]:
-        if not self._can_fetch(url):
-            return None
+    # def _fetch_dynamic(self, url: str) -> Optional[BeautifulSoup]:
+    #     if not self._can_fetch(url):
+    #         return None
 
-        try:
-            self._setup_selenium()
+    #     try:
+    #         self._setup_selenium()
 
-            logger.info(f"Loading dynamic page: {url}")
-            time.sleep(random.uniform(2, 4))
-            self.driver.get(url)
+    #         logger.info(f"Loading dynamic page: {url}")
+    #         time.sleep(random.uniform(2, 4))
+    #         self.driver.get(url)
 
-            # Try dismissing cookie popup if present
-            try:
-                cookie_btn = WebDriverWait(self.driver, 8).until(
-                    EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Accept')]"))
-                )
-                cookie_btn.click()
-                logger.info("Cookie popup dismissed")
-            except:
-                pass
+    #         # Try dismissing cookie popup if present
+    #         try:
+    #             cookie_btn = WebDriverWait(self.driver, 8).until(
+    #                 EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Accept')]"))
+    #             )
+    #             cookie_btn.click()
+    #             logger.info("Cookie popup dismissed")
+    #         except:
+    # #             pass
 
-            # Wait until the main container is visible
-            container_selector = self.config["selectors"]["container"]
-            logger.info(f"Waiting for selector: {container_selector}")
+    #         # Wait until the main container is visible
+    #         container_selector = self.config["selectors"]["container"]
+    #         logger.info(f"Waiting for selector: {container_selector}")
 
-            WebDriverWait(self.driver, 40).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, container_selector))
-            )
+    #         WebDriverWait(self.driver, 40).until(
+    #             EC.presence_of_element_located((By.CSS_SELECTOR, container_selector))
+    #         )
 
-            logger.info("Dynamic content detected — starting deep scroll")
-            self._scroll_page()
+    #         logger.info("Dynamic content detected — starting deep scroll")
+    #         self._scroll_page()
 
-            time.sleep(random.uniform(2, 5))
+    #         time.sleep(random.uniform(2, 5))
 
-            html = self.driver.page_source
-            if len(html) < 1000:
-                logger.warning("Dynamic HTML content appears too small")
+    #         html = self.driver.page_source
+    #         if len(html) < 1000:
+    #             logger.warning("Dynamic HTML content appears too small")
 
-            return BeautifulSoup(html, "html.parser")
+    #         return BeautifulSoup(html, "html.parser")
 
-        except Exception as e:
-            logger.error(f"Dynamic fetch failed: {e}")
-            self.errors.append({"url": url, "error": str(e)})
-            return None
+    #     except Exception as e:
+    #         logger.error(f"Dynamic fetch failed: {e}")
+    #         self.errors.append({"url": url, "error": str(e)})
+    #         return None
 
 
     # EXTRACTION ()
@@ -409,11 +409,8 @@ class ScraperEngine:
 
     #         while current_url and pages_scraped < config.MAX_PAGES_PER_SITE:
 
-    #             if self.type == "dynamic":
-    #                 soup = self._fetch_dynamic(current_url)
-    #             else:
-    #                 soup = self._fetch_static(current_url)
-
+    #            soup = self._fetch_static(current_url)
+    
     #             if not soup:
     #                 break
 
@@ -451,11 +448,7 @@ class ScraperEngine:
             # Existing logic for static & dynamic HTML
             while current_url and pages_scraped < config.MAX_PAGES_PER_SITE:
                 # Fetch page
-                if self.type == 'dynamic':
-                    soup = self._fetch_dynamic(current_url)
-                else:
-                    soup = self._fetch_static(current_url)
-
+                soup = self._fetch_static(current_url)
                 if not soup:
                     logger.error(f"Failed to fetch: {current_url}")
                     break

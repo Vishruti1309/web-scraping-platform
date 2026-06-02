@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from scheduler_orchestrator import ScrapingOrchestrator
 from fastapi.middleware.cors import CORSMiddleware
 import uuid
+from storage_manager import FileExporter
 from fastapi import Body       
 import threading
 
@@ -55,14 +56,30 @@ def get_data(source: str):
 
 @app.post("/save")
 def save_job(job: dict = Body(...)):
-    from storage_manager import StorageManager
+    from storage_manager import StorageManager, FileExporter
 
     storage = StorageManager()
+    exporter = FileExporter()
 
+    # Save to DB
     storage.save_saved_job(job)
 
-    return {"message": "Job saved successfully"}
+    # EXPORT
+    # exporter.export_all_formats([job], "saved_jobs")
 
+    # return {"message": "Job saved successfully"}
+    
+    files = exporter.export_all_formats([job], "saved_jobs")
+
+    # Get one file (CSV for example)
+    file_path = files.get("csv")
+
+    filename = os.path.basename(file_path) if file_path else None
+
+    return {
+        "message": "Job saved successfully",
+        "file": filename
+    }
 
 @app.delete("/clear-data")
 def clear_data():
@@ -71,7 +88,38 @@ def clear_data():
     storage = StorageManager()
     cursor = storage.connection.cursor()
 
-    cursor.execute("DELETE FROM scraping_history")
+    cursor.execute("DELETE FROM saved_jobs")
     storage.connection.commit()
 
     return {"message": "All scraped data deleted"}
+
+
+@app.get("/saved-jobs")
+def get_saved_jobs():
+    from storage_manager import StorageManager
+
+    storage = StorageManager()
+    cursor = storage.connection.cursor()
+
+    cursor.execute("SELECT * FROM saved_jobs ORDER BY saved_at DESC")
+    rows = cursor.fetchall()
+
+    data = [dict(row) for row in rows]
+
+    return data
+
+from fastapi.responses import FileResponse
+import os
+
+@app.get("/download/{filename}")
+def download_file(filename: str):
+    file_path = f"exports/{filename}"
+
+    if os.path.exists(file_path):
+        return FileResponse(
+            path=file_path,
+            filename=filename,
+            media_type="application/octet-stream"
+        )
+    
+    return {"error": "File not found"}
