@@ -24,7 +24,7 @@ function App() {
       if (filename) {
         window.open(`${API}/download/${filename}`, "_blank");
       }
-      
+
         setSavedItems(prev => [...prev, job]); // track saved
 
       } catch (error) {
@@ -56,6 +56,19 @@ function App() {
       }
     }, 3000);
   };
+
+  const exportCSV = async () => {
+  try {
+    const res = await axios.get(`${API}/export/jobs`);
+
+    const filename = res.data.file;
+
+    window.open(`${API}/download/${filename}`, "_blank");
+
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   const fetchData = async () => {
     // const res = await axios.get("http://127.0.0.1:8000/data/books");
@@ -174,6 +187,20 @@ function App() {
         >
           {sortOrder === "newest" ? "⬇ Newest" : "⬆ Oldest"}
         </button>
+
+        <button
+        onClick={exportCSV}
+        style={{
+          padding: "10px",
+          background: "#f59e0b",
+          color: "white",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer"
+        }}
+      >
+        Export CSV
+      </button>
       </div>
 
      <div
