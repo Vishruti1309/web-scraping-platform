@@ -1,27 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";  
 import axios from "axios";
 
 function App() {
   const [status, setStatus] = useState("");
   const [data, setData] = useState([]);
-  const [search, setSearch] = useState("");
-  const [sortOrder, setSortOrder] = useState("newest");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
+  const [search, setSearch] = useState(""); //for search
+  const [sortOrder, setSortOrder] = useState("newest"); // for newest sort 
+  const [minPrice, setMinPrice] = useState(""); // for price sorting
+  const [maxPrice, setMaxPrice] = useState(""); // for price sorting
+  const [view, setView] = useState("scraped"); // or "saved"
+  const [savedItems, setSavedItems] = useState([]); // Saved button turn grey after saved
+  const [activeTab, setActiveTab] = useState("scraped"); // UI of Scraped Data,Saved Jobs
 
-  const saveJob = async (job) => {
-  try {
-    await axios.post("http://127.0.0.1:8000/save", job);
-    alert("Saved!");
-  } catch (error) {
-    console.error(error);
-    alert("Failed to save");
-  }
-};
+  
+    const saveJob = async (job) => {
+      try {
+        await axios.post("http://127.0.0.1:8000/save", job);
+
+        setSavedItems(prev => [...prev, job]); // track saved
+
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
   const startScraping = async () => {
     setStatus("Starting...");
 
-    const res = await axios.post("http://127.0.0.1:8000/scrape/books");
+    // const res = await axios.post("http://127.0.0.1:8000/scrape/books");
+     const res =  await axios.post("http://127.0.0.1:8000/scrape/jobs");
     const jobId = res.data.job_id;
 
     setStatus(" Running...");
@@ -42,26 +49,38 @@ function App() {
   };
 
   const fetchData = async () => {
-    const res = await axios.get("http://127.0.0.1:8000/data/books");
+    // const res = await axios.get("http://127.0.0.1:8000/data/books");
+    const res = await axios.get("http://127.0.0.1:8000/data/jobs");
     setData(res.data);
-  };
+  };  
 
+//   const fetchSavedJobs = async () => {
+//   const res = await axios.get("http://127.0.0.1:8000/saved-jobs");
+//   setData(res.data);
+// };
+
+    const fetchSavedJobs = async () => {
+      try {
+        const res = await axios.get("http://127.0.0.1:8000/saved-jobs");
+        setSavedItems(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    
+      useEffect(() => {
+        fetchSavedJobs();
+      }, []);
   //  Filter +  Price Filter
   const filteredData = data.filter((item) => {
-    const titleMatch = item.title
-      ?.toLowerCase()
-      .includes(search.toLowerCase());
+  const titleMatch = item.title
+    ?.toLowerCase()
+    .includes(search.toLowerCase());
 
-    const price = parseFloat(item.price);
-    const min = minPrice ? parseFloat(minPrice) : 0;
-    const max = maxPrice ? parseFloat(maxPrice) : Infinity;
+  return titleMatch;
+});
 
-    const priceMatch = price >= min && price <= max;
-
-    return titleMatch && priceMatch;
-  });
-
-  // 🔄 Sorting
+  //  Sorting
   const sortedData =
     sortOrder === "newest"
       ? filteredData
@@ -98,7 +117,7 @@ function App() {
 
       <p>Status: {status}</p>
 
-      {/* 🔥 FILTER BAR */}
+      {/* FILTER BAR */}
       <div
         style={{
           display: "flex",
@@ -111,7 +130,7 @@ function App() {
           borderRadius: "10px",
         }}
       >
-        {/* 🔍 Search */}
+        {/*  Search */}
         <input
           type="text"
           placeholder="🔍 Search jobs..."
@@ -127,39 +146,7 @@ function App() {
           }}
         />
 
-        {/* 💰 Min */}
-        <input
-          type="number"
-          placeholder="Min ₹"
-          value={minPrice}
-          onChange={(e) => setMinPrice(e.target.value)}
-          style={{
-            padding: "10px",
-            borderRadius: "6px",
-            border: "1px solid #334155",
-            background: "#0f172a",
-            color: "white",
-            width: "120px",
-          }}
-        />
-
-        {/* 💰 Max */}
-        <input
-          type="number"
-          placeholder="Max ₹"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-          style={{
-            padding: "10px",
-            borderRadius: "6px",
-            border: "1px solid #334155",
-            background: "#0f172a",
-            color: "white",
-            width: "120px",
-          }}
-        />
-
-        {/* 🔄 Sort */}
+        {/*  Sort */}
         <button
           onClick={() =>
             setSortOrder(
@@ -180,78 +167,203 @@ function App() {
         </button>
       </div>
 
-      <h2>Scraped Data:</h2>
-
-      <p style={{ color: "#94a3b8" }}>
-        Showing {sortedData.length} results
-      </p>
-
-      {/* TABLE */}
-      <table
+     <div
+  style={{
+    display: "flex",
+    gap: "10px",
+    marginTop: "20px",
+    background: "#1e293b",
+    padding: "6px",
+    borderRadius: "10px",
+    width: "fit-content"
+  }}
+>
+  {/* Scraped Tab */}
+      <button
+        onClick={() => setActiveTab("scraped")}
         style={{
-          width: "100%",
-          borderCollapse: "collapse",
+          padding: "8px 16px",
+          borderRadius: "8px",
+          border: "none",
+          cursor: "pointer",
+          background:
+            activeTab === "scraped" ? "#3b82f6" : "transparent",
+          color: activeTab === "scraped" ? "white" : "#94a3b8",
+          transition: "0.2s"
         }}
       >
-        <thead>
-          <tr style={{ background: "#1e293b" }}>
-            <th style={{ padding: "12px", textAlign: "left" }}>
-              Title
-            </th>
-            <th style={{ padding: "12px", textAlign: "left" }}>
-              Price
-            </th>
-            <th style={{ padding: "12px", textAlign: "left" }}>
-              Availability
-            </th>
-          </tr>
-        </thead>
+        Scraped Data
+      </button>
 
-        <tbody>
-          {sortedData.map((item, index) => (
-            <tr
+      {/* Saved Tab */}
+      <button
+        onClick={() => setActiveTab("saved")}
+        style={{
+          padding: "8px 16px",
+          borderRadius: "8px",
+          border: "none",
+          cursor: "pointer",
+          background:
+            activeTab === "saved" ? "#3b82f6" : "transparent",
+          color: activeTab === "saved" ? "white" : "#94a3b8",
+          transition: "0.2s"
+        }}
+      >
+        Saved Jobs
+      </button>
+    </div>
+
+
+
+      {/* <h2>Scraped Data:</h2> */}
+      {/* <h2>
+        {view === "scraped" ? "Scraped Data" : "Saved Jobs"}  
+      </h2> */}
+
+        {/* TAB CONTENT */}
+
+{activeTab === "scraped" && (
+  <>
+    <p style={{ color: "#94a3b8" }}>
+      Showing {sortedData.length} results
+    </p>
+
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+        gap: "20px",
+        marginTop: "20px"
+      }}
+    >
+      {sortedData.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            background: "#1e293b",
+            padding: "20px",
+            borderRadius: "12px",
+          }}
+        >
+          <h3 style={{ color: "#38bdf8" }}>
+            {item.title}
+          </h3>
+
+          <p>{item.company}</p>
+
+          <p style={{ color: "#94a3b8" }}>
+            {item.location}
+          </p>
+
+          <p style={{ fontSize: "12px" }}>
+            {item.posted_date}
+          </p>
+
+          <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
+            <button
+              onClick={() =>
+                window.open("https://realpython.github.io/fake-jobs/", "_blank")
+              }
+              style={{
+                flex: 1,
+                background: "#22c55e",
+                color: "white",
+                border: "none",
+                padding: "8px",
+                borderRadius: "6px",
+              }}
+            >
+              Apply
+            </button>
+
+            <button
+              onClick={() => saveJob(item)}
+              disabled={savedItems.some(job => job.title === item.title)}
+              style={{
+                flex: 1,
+                background: savedItems.some(job => job.title === item.title)
+                  ? "#64748b"
+                  : "#3b82f6",
+                color: "white",
+                border: "none",
+                padding: "8px",
+                borderRadius: "6px",
+              }}
+            >
+              {savedItems.some(job => job.title === item.title) ? "Saved" : "Save"}
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </>
+)}
+
+{activeTab === "saved" && (
+  <>
+    <h2 style={{ marginTop: "20px" }}>Saved Jobs</h2>
+
+    {savedItems.length === 0 ? (
+      <p>No saved jobs yet</p>
+    ) : (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          gap: "20px",
+          marginTop: "20px",
+        }}
+      >
+        {data
+          .filter((item) =>
+            savedItems.some(job => job.title === item.title) 
+          )
+          .map((item, index) => (
+            <div
               key={index}
               style={{
-                borderBottom: "1px solid #334155",
+                background: "#1e293b",
+                padding: "20px",
+                borderRadius: "12px",
               }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background =
-                  "#1e293b")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background =
-                  "transparent")
-              }
             >
-              <td style={{ padding: "12px" }}>
+              <h3 style={{ color: "#38bdf8" }}>
                 {item.title}
-              </td>
-              <td style={{ padding: "12px" }}>
-                ₹{item.price}
-              </td>
-              <td style={{ padding: "12px" }}>
-                {item.availability}
-              </td>
+              </h3>
 
-              <td style={{ padding: "12px" }}>
-                  <button
-                    onClick={() => saveJob(item)}
-                    style={{
-                      padding: "6px 10px",
-                      background: "#000080",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
-                    }}
-                  >
-                     Save
-                  </button>
-                </td>
-            </tr>
+              <p>{item.company}</p>
+
+              <p style={{ color: "#94a3b8" }}>
+                {item.location}
+              </p>
+
+              <p style={{ fontSize: "12px" }}>
+                {item.posted_date}
+              </p>
+
+              <button
+                onClick={() =>
+                  setSavedItems((prev) =>
+                    prev.filter((t) => t !== item.title)
+                  )
+                }
+                style={{
+                  marginTop: "10px",
+                  background: "#ef4444",
+                  color: "white",
+                  border: "none",
+                  padding: "8px",
+                  borderRadius: "6px",
+                }}
+              >
+                Remove
+              </button>
+            </div>
           ))}
-        </tbody>
-      </table>
+      </div>
+    )}
+  </>
+)}
     </div>
   );
 }
