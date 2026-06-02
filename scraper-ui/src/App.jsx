@@ -16,8 +16,15 @@ function App() {
   
     const saveJob = async (job) => {
       try {
-        await axios.post(`${API}/save`, job);
+        // await axios.post(`${API}/save`, job);
+        const res = await axios.post(`${API}/save`, job);
 
+      const filename = res.data.file;
+
+      if (filename) {
+        window.open(`${API}/download/${filename}`, "_blank");
+      }
+      
         setSavedItems(prev => [...prev, job]); // track saved
 
       } catch (error) {

@@ -64,11 +64,22 @@ def save_job(job: dict = Body(...)):
     # Save to DB
     storage.save_saved_job(job)
 
-    # EXPORT (THIS IS THE FIX)
-    exporter.export_all_formats([job], "saved_jobs")
+    # EXPORT
+    # exporter.export_all_formats([job], "saved_jobs")
 
-    return {"message": "Job saved successfully"}
+    # return {"message": "Job saved successfully"}
+    
+    files = exporter.export_all_formats([job], "saved_jobs")
 
+    # Get one file (CSV for example)
+    file_path = files.get("csv")
+
+    filename = os.path.basename(file_path) if file_path else None
+
+    return {
+        "message": "Job saved successfully",
+        "file": filename
+    }
 
 @app.delete("/clear-data")
 def clear_data():
@@ -96,3 +107,19 @@ def get_saved_jobs():
     data = [dict(row) for row in rows]
 
     return data
+
+from fastapi.responses import FileResponse
+import os
+
+@app.get("/download/{filename}")
+def download_file(filename: str):
+    file_path = f"exports/{filename}"
+
+    if os.path.exists(file_path):
+        return FileResponse(
+            path=file_path,
+            filename=filename,
+            media_type="application/octet-stream"
+        )
+    
+    return {"error": "File not found"}
