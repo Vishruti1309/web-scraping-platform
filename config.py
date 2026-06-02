@@ -50,91 +50,32 @@ IMPLICIT_WAIT = 20
 
 # SCRAPING TARGETS
 SCRAPING_TARGETS = {
-    # 'quotes': {
-    #     'name': 'Quotes to Scrape',
-    #     'url': 'http://quotes.toscrape.com',
-    #     # 'url': 'http://quotes.toscrape.com',
-    #     'type': 'static',  # static or dynamic
-    #     'enabled': True,
-    #     'schedule': 'daily',  # daily, weekly, hourly
-    #     'selectors': {
-    #         'container': '.quote',
-    #         'text': '.text',
-    #         'author': '.author',
-    #         'tags': '.tag'
-    #     },
-    #     'fields': ['text', 'author', 'tags', 'scraped_at'],
-    #     'pagination': True,
-    #     'pagination_selector': '.next a',
-    #       # NEW
-    #     'field_mapping': {
-    #         'text': 'title',
-    #         'author': 'author_name',
-    #         'tags': 'tags'
-    #     }
-    # },
-    
-    
-    'books': {
-        'name': 'Books to Scrape',
-        'url': 'http://books.toscrape.com/catalogue/page-1.html',
-        'type': 'static',
-        'enabled': True,
-        'schedule': 'daily',
-        'selectors': {
-            'container': 'article.product_pod',
-            'title': 'h3 a',
-            'price': '.price_color',
-            'availability': '.availability',
-            'rating': 'p.star-rating'
-        },
-        'fields': ['title', 'price', 'availability', 'rating', 'scraped_at'],
-        'pagination': True,
-        'pagination_selector': 'li.next a',
-        # NEW
-        'field_mapping': {
-            'title': 'title',
-            'price': 'price_current',
-            'availability': 'availability',
-            'rating': 'rating'
-        }
-    },
-    
-    # 'myntra_tops': {
-    #     'name': 'Myntra Women Tops',
-    #     'url': 'https://www.myntra.com/women-tops',
-    #     'type': 'dynamic',  
+
+    #     'books': {
+    #     'name': 'Books to Scrape',
+    #     'url': 'http://books.toscrape.com/catalogue/page-1.html',
+    #     'type': 'static',
     #     'enabled': True,
     #     'schedule': 'daily',
     #     'selectors': {
-    #         'container': 'li.product-base',
-    #         'brand': 'h3.product-brand',
-    #         'name': 'h4.product-product',
-    #         'price': 'span.product-discountedPrice',
-    #         'original_price': 'span.product-strike',
-    #         'discount': 'span.product-discountPercentage',
-    #         'rating': 'div.product-rating span',
-    #         'image': 'img.img-responsive',
-    #         'link': 'a'
+    #         'container': 'article.product_pod',
+    #         'title': 'h3 a',
+    #         'price': '.price_color',
+    #         'availability': '.availability',
+    #         'rating': 'p.star-rating'
     #     },
-    #     'fields': ['brand', 'name', 'price', 'original_price', 'discount', 'rating', 'image', 'link', 'scraped_at'],
-    #     'pagination': False,
-    #     'pagination_selector': None, # Next page button
-
-    #       # NEW
+    #     'fields': ['title', 'price', 'availability', 'rating', 'scraped_at'],
+    #     'pagination': True,
+    #     'pagination_selector': 'li.next a',
+    #     # NEW
     #     'field_mapping': {
-    #         'name': 'title',
-    #         'brand': 'brand',
+    #         'title': 'title',
     #         'price': 'price_current',
-    #         'original_price': 'price_original',
-    #         'discount': 'discount_percent',
-    #         'rating': 'rating',
-    #         'image': 'image_url',
-    #         'link': 'product_url'
+    #         'availability': 'availability',
+    #         'rating': 'rating'
     #     }
     # },
-
-
+  
     # BY API
         'json_placeholder_posts': {
         'name': 'JSONPlaceholder Posts API',
@@ -165,45 +106,34 @@ SCRAPING_TARGETS = {
         'pagination': False
     },
 
-    'myntra_mens_shoes': {
-    'name': 'Myntra Men Shoes',
-    'url': 'https://www.myntra.com/men-shoes',
-    'type': 'dynamic',
+ 'jobs': {
+    'name': 'Fake Jobs',
+    'url': 'https://realpython.github.io/fake-jobs/',
+    'type': 'static',
     'enabled': True,
     'schedule': 'daily',
-    'selectors': {
-        'container': 'li.product-base',
-        'brand': 'h3.product-brand',
-        'name': 'h4.product-product',
-        'price': 'span.product-discountedPrice',
-        'original_price': 'span.product-strike',
-        'discount': 'span.product-discountPercentage',
-        'rating': 'div.product-rating span',
-        'image': 'img.img-responsive',
-        'link': 'a'
-    },
-    'fields': ['brand',
-        'name',
-        'price',
-        'original_price',
-        'discount',
-        'rating',
-        'image',
-        'link',
-        'scraped_at'],
-    'pagination': True,
-    'pagination_selector': 'a.pagination-next',
 
-    # optional: field standardization
+    'selectors': {
+        'container': 'div.card-content',
+        'title': 'h2.title.is-5',
+        'company': 'h3.subtitle.is-6.company',
+        'location': 'p.location',
+        'date': 'time',
+        'link': 'a.card-footer-item'
+    },
+
+    'fields': ['title', 'company', 'location', 'date', 'scraped_at'],
+
+    'pagination': False,
+
     'field_mapping': {
-        'name': 'title',
-        'price': 'price_current',
-        'original_price': 'price_original',
-        'discount': 'discount_percent',
-        'image': 'image_url',
-        'link': 'product_url'
+        'title': 'title',
+        'company': 'company',
+        'location': 'location',
+        'date': 'posted_date',
+         'link': 'apply_url'
     }
-},
+}
 
 
 }

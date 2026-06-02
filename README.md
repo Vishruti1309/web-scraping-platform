@@ -182,9 +182,9 @@ User can filter / sort / save
 
 📸 Features Demo (Add screenshots here)
 
-* Dashboard UI - [Dashboard](screenshots/dashboard.png)
-* Filters & sorting - [Filters](screenshots/filters.png)
-* Exported files - [Exported_files](exports/)
+* Dashboard UI - [Dashboard](screenshot/dashboard.png)
+* Filters & sorting - [Filters](screenshot/filtering%20&%20sorting.png)
+* Exported files - [Exported_files](exports/books_data_20260601_184449.csv)
 
 
 

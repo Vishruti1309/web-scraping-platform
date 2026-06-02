@@ -96,13 +96,14 @@ class StorageManager:
             cursor = self.connection.cursor()
             
             cursor.execute('''
-            CREATE TABLE IF NOT EXISTS saved_jobs (
+           CREATE TABLE IF NOT EXISTS saved_jobs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT,
-                price TEXT,
-                availability TEXT,
+                company TEXT,
+                location TEXT,
+                posted_date TEXT,
                 saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
+                )
             ''')
             # Main data table
             cursor.execute('''
@@ -327,12 +328,13 @@ class StorageManager:
         cursor = self.connection.cursor()
 
         cursor.execute('''
-            INSERT INTO saved_jobs (title, price, availability)
-            VALUES (?, ?, ?)
+          INSERT INTO saved_jobs (title, company, location, posted_date)
+                VALUES (?, ?, ?, ?)
         ''', (
             job.get("title"),
-            job.get("price"),
-            job.get("availability")
+            job.get("company"),
+            job.get("location"),
+            job.get("posted_date")
         ))
 
         self.connection.commit()
