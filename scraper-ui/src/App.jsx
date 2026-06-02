@@ -11,11 +11,12 @@ function App() {
   const [view, setView] = useState("scraped"); // or "saved"
   const [savedItems, setSavedItems] = useState([]); // Saved button turn grey after saved
   const [activeTab, setActiveTab] = useState("scraped"); // UI of Scraped Data,Saved Jobs
+  const API = "https://job-tracker-api-yq7g.onrender.com";
 
   
     const saveJob = async (job) => {
       try {
-        await axios.post("http://127.0.0.1:8000/save", job);
+        await axios.post(`${API}/save`, job);
 
         setSavedItems(prev => [...prev, job]); // track saved
 
@@ -27,8 +28,8 @@ function App() {
   const startScraping = async () => {
     setStatus("Starting...");
 
-    // const res = await axios.post("http://127.0.0.1:8000/scrape/books");
-     const res =  await axios.post("http://127.0.0.1:8000/scrape/jobs");
+    
+     const res = await axios.post(`${API}/scrape/jobs`);
     const jobId = res.data.job_id;
 
     setStatus(" Running...");
@@ -38,7 +39,8 @@ function App() {
 
   const checkJobStatus = (jobId) => {
     const interval = setInterval(async () => {
-      const res = await axios.get(`http://127.0.0.1:8000/job/${jobId}`);
+      // const res = await axios.get(`http://127.0.0.1:8000/job/${jobId}`);
+      const res = await axios.get(`${API}/job/${jobId}`);
 
       if (res.data.status === "completed") {
         setStatus("Completed");
@@ -50,7 +52,7 @@ function App() {
 
   const fetchData = async () => {
     // const res = await axios.get("http://127.0.0.1:8000/data/books");
-    const res = await axios.get("http://127.0.0.1:8000/data/jobs");
+    const res = await axios.get(`${API}/data/jobs`);
     setData(res.data);
   };  
 
@@ -61,7 +63,7 @@ function App() {
 
     const fetchSavedJobs = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/saved-jobs");
+        const res = await axios.get(`${API}/saved-jobs`);
         setSavedItems(res.data);
       } catch (err) {
         console.error(err);
