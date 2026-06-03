@@ -123,3 +123,26 @@ def download_file(filename: str):
         )
     
     return {"error": "File not found"}
+
+@app.get("/export/{source}")
+def export_all(source: str):
+    from storage_manager import StorageManager, FileExporter
+    import os
+
+    storage = StorageManager()
+    exporter = FileExporter()
+
+    data = storage.get_data(source)
+
+    if not data:
+        return {"error": "No data available"}
+
+    files = exporter.export_all_formats(data, f"{source}_data")
+
+    file_path = files.get("csv")
+    filename = os.path.basename(file_path) if file_path else None
+
+    return {
+        "message": "Export successful",
+        "file": filename
+    }

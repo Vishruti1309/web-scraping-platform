@@ -57,6 +57,26 @@ function App() {
     }, 3000);
   };
 
+  const exportAllJobs = async () => {
+  try {
+    const res = await axios.get(`${API}/export/jobs`);
+
+    const filename = res.data.file;
+
+    if (filename) {
+      const link = document.createElement("a");
+      link.href = `${API}/download/${filename}`;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+  } catch (error) {
+    console.error(error);
+  }
+};
+
   const exportCSV = async () => {
   try {
     const res = await axios.get(`${API}/export/jobs`);
@@ -137,7 +157,12 @@ function App() {
         Start Scraping
       </button>
 
+
+
+
       <p>Status: {status}</p>
+      
+     
 
       {/* FILTER BAR */}
       <div
@@ -167,6 +192,21 @@ function App() {
             width: "220px",
           }}
         />
+        
+        <button
+  onClick={exportAllJobs}
+  style={{
+    padding: "10px",
+    background: "#10b981",
+    color: "white",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer"
+  }}
+>
+  Export All Jobs
+</button>
+        
 
         {/*  Sort */}
         <button
@@ -187,20 +227,7 @@ function App() {
         >
           {sortOrder === "newest" ? "⬇ Newest" : "⬆ Oldest"}
         </button>
-
-        <button
-        onClick={exportCSV}
-        style={{
-          padding: "10px",
-          background: "#f59e0b",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer"
-        }}
-      >
-        Export CSV
-      </button>
+        
       </div>
 
      <div
